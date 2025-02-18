@@ -1,9 +1,8 @@
 import { getUserIds, getData, setData } from "./storage.js";
 
-// Utility functions to interact with the DOM
 function populateUserDropdown(users, callback) {
   const userSelect = document.getElementById("user-select");
-  userSelect.innerHTML = "";  // Clear previous options
+  userSelect.innerHTML = "";
   users.forEach((userId) => {
     const option = document.createElement("option");
     option.value = userId;
@@ -11,7 +10,6 @@ function populateUserDropdown(users, callback) {
     userSelect.appendChild(option);
   });
 
-  // Call the callback to load the bookmarks for the selected user
   userSelect.addEventListener("change", (event) => {
     callback(event.target.value);
   });
@@ -19,22 +17,21 @@ function populateUserDropdown(users, callback) {
 
 function updateBookmarkList(bookmarks) {
   const bookmarkList = document.getElementById("bookmark-list");
-  bookmarkList.innerHTML = ""; // Clear previous bookmarks
+  bookmarkList.innerHTML = "";
 
   if (bookmarks.length === 0) {
     bookmarkList.innerHTML = "<p>No bookmarks found.</p>";
     return;
   }
 
-  bookmarks.reverse().forEach((bookmark, index) => {
+  bookmarks.reverse().forEach((bookmark) => {
     const listItem = document.createElement("li");
     const link = document.createElement("a");
     link.href = bookmark.url;
     link.textContent = bookmark.title;
     link.target = "_blank";
     listItem.appendChild(link);
-
-    // Ensure timestamp exists and is valid before formatting
+    
     const timestamp = bookmark.timestamp ? new Date(bookmark.timestamp).toLocaleString() : "Invalid Date";
     listItem.innerHTML += ` - ${bookmark.description} (Added on: ${timestamp})`;
 
@@ -61,7 +58,12 @@ function handleFormSubmit(event, userSelect, urlInput, titleInput, descriptionIn
   const bookmarks = getData(userId) || [];
   bookmarks.push(newBookmark);
   setData(userId, bookmarks);
-  callback(userId);  // Update bookmarks list after adding a new one
+  callback(userId);
+
+  // Clear the input fields after submission
+  urlInput.value = "";
+  titleInput.value = "";
+  descriptionInput.value = "";
 }
 
 function handleDescriptionKeydown(event, form) {
@@ -71,7 +73,6 @@ function handleDescriptionKeydown(event, form) {
   }
 }
 
-// Main function to handle bookmark loading and form submission
 document.addEventListener("DOMContentLoaded", () => {
   const userSelect = document.getElementById("user-select");
   const bookmarkForm = document.getElementById("bookmark-form");
@@ -80,14 +81,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const descriptionInput = document.getElementById("description");
 
   const users = getUserIds();
-
-  // Populate the dropdown and load bookmarks for the selected user
   populateUserDropdown(users, (userId) => {
     const bookmarks = getData(userId) || [];
     updateBookmarkList(bookmarks);
   });
 
-  // Handle form submission
   bookmarkForm.addEventListener("submit", (event) => {
     handleFormSubmit(event, userSelect, urlInput, titleInput, descriptionInput, (userId) => {
       const bookmarks = getData(userId) || [];
@@ -95,12 +93,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Enable Enter key submission from the textarea
   descriptionInput.addEventListener("keydown", function (event) {
     handleDescriptionKeydown(event, bookmarkForm);
   });
 
-  // Load initial bookmarks for the first user
   if (users.length > 0) {
     userSelect.value = users[0];
     const initialBookmarks = getData(users[0]) || [];
