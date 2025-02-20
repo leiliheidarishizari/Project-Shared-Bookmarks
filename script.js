@@ -20,7 +20,9 @@ function updateBookmarkList(bookmarks) {
   bookmarkList.innerHTML = "";
 
   if (bookmarks.length === 0) {
-    bookmarkList.innerHTML = "<p>No bookmarks found.</p>";
+    const listItem = document.createElement("li");
+    listItem.textContent = "No bookmarks found.";
+    bookmarkList.appendChild(listItem);
     return;
   }
 
@@ -105,3 +107,4 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 export { updateBookmarkList };
+

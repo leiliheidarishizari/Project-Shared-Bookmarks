@@ -3,7 +3,6 @@
  */
 
 import { updateBookmarkList } from "./script.js";
-// import "@testing-library/jest-dom";
 
 describe("updateBookmarkList", () => {
   let bookmarkList;
@@ -42,5 +41,10 @@ describe("updateBookmarkList", () => {
 
     updateBookmarkList(bookmarks);
     expect(bookmarkList.innerHTML).toContain("Invalid Date");
+  });
+
+  test("handles empty bookmark list gracefully", () => {
+    updateBookmarkList([]);
+    expect(bookmarkList.innerHTML).toContain("No bookmarks found.");
   });
 });
